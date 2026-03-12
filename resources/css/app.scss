@@ -1,0 +1,22 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700;800&display=swap');
+
+// Variables
+$primary:	hsl(28, 100%, 50%);
+$secondary:	hsl(28, 100%, 45%);
+$light:		hsl(30, 23%, 95%);
+$dark:      hsl(28, 10%, 14%);
+$gray:		hsl(28, 10%, 97%);
+
+// Bootstrap
+@import 'bootstrap/scss/bootstrap';
+
+// Typography
+$font-family-sans-serif: 'Open Sans', sans-serif;
+
+.fullheight{
+    min-height: calc(100vh - 56px) !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

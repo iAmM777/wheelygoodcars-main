@@ -2,16 +2,16 @@
 
 @section('content')
     <div class="py-4 my-offers-page">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div class="offer-header d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="h3 mb-1">Mijn aanbod</h1>
                 <p class="text-muted mb-0">Overzicht van je aangeboden auto's en snelle beheeracties.</p>
             </div>
-            <a href="{{ route('cars.create.step1') }}" class="btn btn-primary">Nieuwe auto aanbieden</a>
+            <a href="{{ route('cars.create.step1') }}" class="btn btn-primary px-4">Nieuwe auto aanbieden</a>
         </div>
 
         @if (session('status'))
-            <div class="alert alert-success">{{ session('status') }}</div>
+            <div class="alert alert-success border-0 shadow-sm status-alert">{{ session('status') }}</div>
         @endif
 
         <div class="row g-3 mb-4">
@@ -42,9 +42,15 @@
         </div>
 
         @if ($cars->count() === 0)
-            <div class="alert alert-light border">Je hebt nog geen auto's aangeboden.</div>
+            <div class="card border-0 shadow-sm empty-state-card">
+                <div class="card-body py-4 text-center">
+                    <p class="mb-1 fw-semibold">Je hebt nog geen auto's aangeboden.</p>
+                    <p class="text-muted mb-3">Plaats je eerste aanbod en beheer het hier in dit overzicht.</p>
+                    <a href="{{ route('cars.create.step1') }}" class="btn btn-outline-primary">Start met aanbieden</a>
+                </div>
+            </div>
         @else
-            <div class="card border-0 shadow-sm">
+            <div class="card border-0 shadow-sm table-card">
                 <div class="table-responsive">
                     <table class="table table-hover align-middle my-offers-table mb-0">
                     <thead>
@@ -82,20 +88,20 @@
                                             <form method="POST" action="{{ route('cars.mark-active', $car) }}">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-outline-success">Activeren</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-success action-btn">Activeren</button>
                                             </form>
                                         @else
                                             <form method="POST" action="{{ route('cars.mark-sold', $car) }}">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="btn btn-sm btn-outline-secondary">Markeer verkocht</button>
+                                                <button type="submit" class="btn btn-sm btn-outline-secondary action-btn">Markeer verkocht</button>
                                             </form>
                                         @endif
 
                                         <form method="POST" action="{{ route('cars.destroy', $car) }}" onsubmit="return confirm('Weet je zeker dat je deze auto wilt verwijderen?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-outline-danger">Verwijderen</button>
+                                            <button type="submit" class="btn btn-sm btn-danger action-btn">Verwijderen</button>
                                         </form>
                                     </div>
                                 </td>

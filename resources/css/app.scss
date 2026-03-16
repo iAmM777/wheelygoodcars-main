@@ -22,9 +22,30 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
 }
 
 .my-offers-page {
+    .offer-header {
+        background: linear-gradient(120deg, #fff8f2 0%, #ffffff 55%, #fff2e7 100%);
+        border: 1px solid #f1e2d6;
+        border-radius: 1rem;
+        padding: 1rem 1.1rem;
+    }
+
+    .status-alert {
+        border-radius: 0.8rem;
+    }
+
     .stats-card {
         border-radius: 0.8rem;
         background: linear-gradient(135deg, #ffffff 0%, #faf6f0 100%);
+    }
+
+    .empty-state-card {
+        border-radius: 1rem;
+        background: radial-gradient(circle at top right, #fff4e7, #ffffff 55%);
+    }
+
+    .table-card {
+        border-radius: 1rem;
+        overflow: hidden;
     }
 
     .my-offers-table thead th {
@@ -44,6 +65,10 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         vertical-align: middle;
     }
 
+    .my-offers-table tbody tr:hover {
+        background-color: #fff7f0;
+    }
+
     .license-pill {
         display: inline-block;
         background-color: #ffcb05;
@@ -53,5 +78,22 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         padding: 0.2rem 0.55rem;
         letter-spacing: 0.08em;
         font-size: 0.84rem;
+    }
+
+    .action-btn {
+        min-width: 7.5rem;
+        font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+        .my-offers-table td:last-child > div {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .action-btn {
+            width: 100%;
+            min-width: unset;
+        }
     }
 }

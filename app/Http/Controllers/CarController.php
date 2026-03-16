@@ -12,7 +12,7 @@ class CarController extends Controller
     public function index(): View
     {
         $cars = Car::query()
-            ->whereNull('sold_at')
+            ->orderByRaw('sold_at IS NOT NULL')
             ->latest()
             ->paginate(12);
 

@@ -25,6 +25,11 @@
                                 <p class="mb-1"><strong>Kenteken:</strong> {{ $car->license_plate }}</p>
                                 <p class="mb-1"><strong>Kilometerstand:</strong> {{ number_format($car->mileage, 0, ',', '.') }} km</p>
                                 <p class="mb-0"><strong>Vraagprijs:</strong> EUR {{ number_format((float) $car->price, 2, ',', '.') }}</p>
+                                @if ($car->sold_at !== NULL)
+                                    <p class="mb-0"><strong>Status:</strong> Verkocht</p>
+                                @else
+                                    <p class="mb-0"><strong>Status:</strong> Te koop</p>
+                                @endif
                             </div>
                         </div>
                     </div>

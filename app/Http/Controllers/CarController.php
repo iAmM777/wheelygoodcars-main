@@ -21,12 +21,56 @@ class CarController extends Controller
 
     public function myOffers(Request $request): View
     {
-        $cars = $request->user()
-            ->cars()
+        $userCars = $request->user()->cars();
+
+        $cars = (clone $userCars)
             ->latest()
             ->paginate(12);
 
-        return view('cars.my-offers', compact('cars'));
+        $stats = [
+            'total' => (clone $userCars)->count(),
+            'active' => (clone $userCars)->whereNull('sold_at')->count(),
+            'sold' => (clone $userCars)->whereNotNull('sold_at')->count(),
+        ];
+
+        return view('cars.my-offers', compact('cars', 'stats'));
+    }
+
+    public function markAsSold(Request $request, Car $car): RedirectResponse
+    {
+        $this->ensureOwner($request, $car);
+
+        $car->update([
+            'sold_at' => now(),
+        ]);
+
+        return redirect()
+            ->route('cars.my-offers')
+            ->with('status', 'Auto gemarkeerd als verkocht.');
+    }
+
+    public function markAsActive(Request $request, Car $car): RedirectResponse
+    {
+        $this->ensureOwner($request, $car);
+
+        $car->update([
+            'sold_at' => null,
+        ]);
+
+        return redirect()
+            ->route('cars.my-offers')
+            ->with('status', 'Auto weer actief in je aanbod.');
+    }
+
+    public function destroy(Request $request, Car $car): RedirectResponse
+    {
+        $this->ensureOwner($request, $car);
+
+        $car->delete();
+
+        return redirect()
+            ->route('cars.my-offers')
+            ->with('status', 'Auto verwijderd uit je aanbod.');
     }
 
     public function createStepOne(): View
@@ -127,5 +171,10 @@ class CarController extends Controller
     private function normalizeLicensePlate(string $licensePlate): string
     {
         return strtoupper((string) preg_replace('/[^A-Za-z0-9]/', '', $licensePlate));
+    }
+
+    private function ensureOwner(Request $request, Car $car): void
+    {
+        abort_unless((int) $car->user_id === (int) $request->user()->id, 403);
     }
 }

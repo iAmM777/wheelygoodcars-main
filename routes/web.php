@@ -25,6 +25,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/cars/create/step-2', [CarController::class, 'storeStepTwo'])->name('cars.create.step2.store');
 
     Route::get('/my-offers', [CarController::class, 'myOffers'])->name('cars.my-offers');
+    Route::patch('/my-offers/{car}/sold', [CarController::class, 'markAsSold'])->name('cars.mark-sold');
+    Route::patch('/my-offers/{car}/activate', [CarController::class, 'markAsActive'])->name('cars.mark-active');
+    Route::delete('/my-offers/{car}', [CarController::class, 'destroy'])->name('cars.destroy');
 });
 
 require __DIR__.'/auth.php';

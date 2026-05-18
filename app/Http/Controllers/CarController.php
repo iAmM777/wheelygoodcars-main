@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -36,7 +37,7 @@ class CarController extends Controller
         return view('cars.my-offers', compact('cars', 'stats'));
     }
 
-    public function markAsSold(Request $request, Car $car): RedirectResponse
+    public function markAsSold(Request $request, Car $car): RedirectResponse|JsonResponse
     {
         $this->ensureOwner($request, $car);
 
@@ -44,18 +45,32 @@ class CarController extends Controller
             'sold_at' => now(),
         ]);
 
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'sold',
+                'sold_at' => $car->sold_at?->toIso8601String(),
+            ]);
+        }
+
         return redirect()
             ->route('cars.my-offers')
             ->with('status', 'Auto gemarkeerd als verkocht.');
     }
 
-    public function markAsActive(Request $request, Car $car): RedirectResponse
+    public function markAsActive(Request $request, Car $car): RedirectResponse|JsonResponse
     {
         $this->ensureOwner($request, $car);
 
         $car->update([
             'sold_at' => null,
         ]);
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => 'active',
+                'sold_at' => null,
+            ]);
+        }
 
         return redirect()
             ->route('cars.my-offers')

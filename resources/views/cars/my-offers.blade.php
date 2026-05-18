@@ -19,7 +19,7 @@
                 <div class="card border-0 shadow-sm stats-card">
                     <div class="card-body">
                         <p class="text-uppercase small text-muted mb-1">Totaal</p>
-                        <p class="h4 mb-0">{{ $stats['total'] }}</p>
+                        <p id="stats-total" class="h4 mb-0">{{ $stats['total'] }}</p>
                     </div>
                 </div>
             </div>
@@ -27,7 +27,7 @@
                 <div class="card border-0 shadow-sm stats-card">
                     <div class="card-body">
                         <p class="text-uppercase small text-muted mb-1">Actief</p>
-                        <p class="h4 mb-0 text-success">{{ $stats['active'] }}</p>
+                        <p id="stats-active" class="h4 mb-0 text-success">{{ $stats['active'] }}</p>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <div class="card border-0 shadow-sm stats-card">
                     <div class="card-body">
                         <p class="text-uppercase small text-muted mb-1">Verkocht</p>
-                        <p class="h4 mb-0 text-secondary">{{ $stats['sold'] }}</p>
+                        <p id="stats-sold" class="h4 mb-0 text-secondary">{{ $stats['sold'] }}</p>
                     </div>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     </thead>
                     <tbody>
                         @foreach ($cars as $car)
-                            <tr>
+                            <tr data-car-id="{{ $car->id }}" data-sold="{{ $car->sold_at ? '1' : '0' }}">
                                 <td>
                                     <span class="license-pill">{{ $car->license_plate }}</span>
                                 </td>
@@ -75,24 +75,24 @@
                                 </td>
                                 <td>{{ number_format($car->mileage, 0, ',', '.') }} km</td>
                                 <td>EUR {{ number_format((float) $car->price, 2, ',', '.') }}</td>
-                                <td>
+                                <td data-status-cell>
                                     @if ($car->sold_at)
                                         <span class="badge text-bg-secondary">Verkocht</span>
                                     @else
                                         <span class="badge text-bg-success">Te koop</span>
                                     @endif
                                 </td>
-                                <td>
+                                <td data-actions-cell>
                                     <div class="d-flex justify-content-end gap-2">
                                         <a href="{{ route('cars.edit', $car) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
                                         @if ($car->sold_at)
-                                            <form method="POST" action="{{ route('cars.mark-active', $car) }}">
+                                            <form method="POST" action="{{ route('cars.mark-active', $car) }}" data-ajax="true">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="btn btn-sm btn-outline-success action-btn">Activeren</button>
                                             </form>
                                         @else
-                                            <form method="POST" action="{{ route('cars.mark-sold', $car) }}">
+                                            <form method="POST" action="{{ route('cars.mark-sold', $car) }}" data-ajax="true">
                                                 @csrf
                                                 @method('PATCH')
                                                 <button type="submit" class="btn btn-sm btn-outline-secondary action-btn">Markeer verkocht</button>

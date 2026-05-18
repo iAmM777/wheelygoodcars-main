@@ -20,6 +20,14 @@ class CarController extends Controller
         return view('cars.index', compact('cars'));
     }
 
+    public function show(Car $car): View
+    {
+        // Prevent viewing sold cars in detail (guests shouldn't see them)
+        abort_if($car->sold_at !== null, 404);
+
+        return view('cars.show', compact('car'));
+    }
+
     public function myOffers(Request $request): View
     {
         $userCars = $request->user()->cars();

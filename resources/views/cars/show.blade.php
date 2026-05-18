@@ -1,0 +1,119 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <!-- Back Link -->
+            <a href="{{ route('cars.index') }}" class="btn btn-outline-secondary btn-sm mb-4">
+                ← Terug naar overzicht
+            </a>
+
+            <!-- Car Detail Card -->
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <!-- Image Section -->
+                <div class="car-detail-image-wrapper bg-light d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                    @if($car->image)
+                        <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->brand }} {{ $car->model }}" class="img-fluid" style="height: 100%; object-fit: cover;">
+                    @else
+                        <div class="text-center text-muted">
+                            <svg width="80" height="80" fill="currentColor" viewBox="0 0 16 16" style="margin-bottom: 1rem;">
+                                <path d="M.54 3.87.5 3a2 2 0 0 1 2-2h3.672a2 2 0 0 1 1.414.586l.828.828A2 2 0 0 0 9.828 3h3.982a2 2 0 0 1 1.992 2.181l-.637 7.138A2 2 0 0 1 13.174 14H2.826a2 2 0 0 1-1.991-1.881L.54 5.005a2 2 0 0 1 .001-.998zM5 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zm7 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM1.39 6.41A1 1 0 0 0 1 7a1 1 0 1 0 1-1 1 1 0 0 0-.61.41z"/>
+                            </svg>
+                            <p class="mt-3">Geen afbeelding beschikbaar</p>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Details Section -->
+                <div class="card-body p-5">
+                    <!-- Title -->
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div>
+                            <h1 class="card-title mb-0">{{ $car->brand }} {{ $car->model }}</h1>
+                            <small class="text-muted">Bouwjaar {{ $car->production_year ?? 'onbekend' }}</small>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-success p-3" style="font-size: 1.25rem;">
+                                €{{ number_format($car->price, 2, ',', '.') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- License Plate -->
+                    <div class="mb-4 text-center">
+                        <span class="license-plate-badge-detail">{{ $car->license_plate }}</span>
+                    </div>
+
+                    <!-- Key Specs Row -->
+                    <div class="row mb-5 text-center">
+                        <div class="col-md-3">
+                            <div class="spec-box p-3 border-bottom border-lg-0">
+                                <div class="spec-value">{{ $car->mileage ?? '0' }} km</div>
+                                <div class="spec-label text-muted small">Kilometerstand</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="spec-box p-3 border-bottom border-lg-0">
+                                <div class="spec-value">{{ $car->doors ?? '-' }}</div>
+                                <div class="spec-label text-muted small">Deuren</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="spec-box p-3 border-bottom border-lg-0">
+                                <div class="spec-value">{{ $car->seats ?? '-' }}</div>
+                                <div class="spec-label text-muted small">Zitplaatsen</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="spec-box p-3">
+                                <div class="spec-value">{{ $car->weight ?? '-' }} kg</div>
+                                <div class="spec-label text-muted small">Gewicht</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold text-uppercase text-muted mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                                🎨 Kleur
+                            </h6>
+                            <p class="mb-0">{{ $car->color ?? 'Niet gespecificeerd' }}</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <h6 class="fw-bold text-uppercase text-muted mb-2" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                                👤 Verkoper
+                            </h6>
+                            <p class="mb-0">{{ $car->user->name }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Created At -->
+                    <div class="text-muted small border-top pt-3">
+                        📅 Aangeboden op {{ $car->created_at->format('d F Y') }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Section -->
+            <div class="card mt-4 shadow-sm border-0 rounded-4 p-4">
+                <h5 class="mb-3">
+                    💬 Interesse in deze auto?
+                </h5>
+                <p class="text-muted mb-4">
+                    Helaas kunnen we momenteel geen interesse uitdrukken via deze website. 
+                    Neem contact op met de verkoper voor meer informatie.
+                </p>
+                @auth
+                    @if(auth()->user()->id === $car->user_id)
+                        <div class="alert alert-info mb-0">
+                            <strong>Je auto:</strong> Dit is je eigen aanbieding.
+                        </div>
+                    @endif
+                @endauth
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

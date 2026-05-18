@@ -30,38 +30,40 @@
             <div class="row g-3">
                 @foreach ($cars as $car)
                     <div class="col-12 col-md-6 col-lg-4">
-                        <div class="card h-100 car-card shadow-sm border-0">
-                            <div class="card-body d-flex flex-column">
-                                <div class="mb-3">
-                                    <span class="badge text-bg-success">Te koop</span>
-                                </div>
-                                <h2 class="h5 fw-bold mb-1">{{ $car->brand }} {{ $car->model }}</h2>
-                                <p class="text-muted small mb-3">Bouwjaar {{ $car->production_year ?? '—' }}</p>
-                                
-                                <div class="mb-3 pb-3 border-bottom small">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Kilometer:</span>
-                                        <strong>{{ number_format($car->mileage, 0, ',', '.') }} km</strong>
+                        <a href="{{ route('cars.show', $car) }}" class="text-decoration-none">
+                            <div class="card h-100 car-card shadow-sm border-0">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="mb-3">
+                                        <span class="badge text-bg-success">Te koop</span>
                                     </div>
-                                    @if($car->doors)
+                                    <h2 class="h5 fw-bold mb-1 text-dark">{{ $car->brand }} {{ $car->model }}</h2>
+                                    <p class="text-muted small mb-3">Bouwjaar {{ $car->production_year ?? '—' }}</p>
+                                    
+                                    <div class="mb-3 pb-3 border-bottom small">
                                         <div class="d-flex justify-content-between mb-2">
-                                            <span class="text-muted">Deuren:</span>
-                                            <strong>{{ $car->doors }}</strong>
+                                            <span class="text-muted">Kilometer:</span>
+                                            <strong>{{ number_format($car->mileage, 0, ',', '.') }} km</strong>
                                         </div>
-                                    @endif
-                                    @if($car->seats)
-                                        <div class="d-flex justify-content-between">
-                                            <span class="text-muted">Zitplaatsen:</span>
-                                            <strong>{{ $car->seats }}</strong>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="mt-auto">
-                                    <p class="mb-2"><span class="text-muted">Kenteken:</span> <span class="license-plate-badge">{{ $car->license_plate }}</span></p>
-                                    <p class="h5 fw-bold text-primary mb-0">EUR {{ number_format((float) $car->price, 2, ',', '.') }}</p>
+                                        @if($car->doors)
+                                            <div class="d-flex justify-content-between mb-2">
+                                                <span class="text-muted">Deuren:</span>
+                                                <strong>{{ $car->doors }}</strong>
+                                            </div>
+                                        @endif
+                                        @if($car->seats)
+                                            <div class="d-flex justify-content-between">
+                                                <span class="text-muted">Zitplaatsen:</span>
+                                                <strong>{{ $car->seats }}</strong>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="mt-auto">
+                                        <p class="mb-2"><span class="text-muted">Kenteken:</span> <span class="license-plate-badge">{{ $car->license_plate }}</span></p>
+                                        <p class="h5 fw-bold text-primary mb-0">EUR {{ number_format((float) $car->price, 2, ',', '.') }}</p>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 @endforeach
             </div>

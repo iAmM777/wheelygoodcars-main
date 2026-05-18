@@ -21,6 +21,34 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
     align-items: center;
 }
 
+.public-listing-page {
+    .car-card {
+        border-radius: 0.85rem;
+        transition: box-shadow 0.3s ease, transform 0.3s ease;
+
+        &:hover {
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+            transform: translateY(-2px);
+        }
+    }
+
+    .license-plate-badge {
+        display: inline-block;
+        background-color: #ffcb05;
+        color: #1f1a17;
+        font-weight: 700;
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        padding: 0.25rem 0.6rem;
+        border-radius: 0.3rem;
+    }
+
+    .empty-state {
+        border-radius: 1rem;
+        background: radial-gradient(circle at top right, #fff4e7, #ffffff 55%);
+    }
+}
+
 .my-offers-page {
     .offer-header {
         background: linear-gradient(120deg, #fff8f2 0%, #ffffff 55%, #fff2e7 100%);

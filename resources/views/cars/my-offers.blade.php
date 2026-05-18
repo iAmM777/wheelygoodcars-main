@@ -84,6 +84,7 @@
                                 </td>
                                 <td>
                                     <div class="d-flex justify-content-end gap-2">
+                                        <a href="{{ route('cars.edit', $car) }}" class="btn btn-sm btn-outline-primary">Bewerken</a>
                                         @if ($car->sold_at)
                                             <form method="POST" action="{{ route('cars.mark-active', $car) }}">
                                                 @csrf

@@ -73,6 +73,33 @@ class CarController extends Controller
             ->with('status', 'Auto verwijderd uit je aanbod.');
     }
 
+    public function edit(Request $request, Car $car): View
+    {
+        $this->ensureOwner($request, $car);
+
+        return view('cars.edit', compact('car'));
+    }
+
+    public function update(Request $request, Car $car): RedirectResponse
+    {
+        $this->ensureOwner($request, $car);
+
+        $data = $request->validate([
+            'price' => ['required', 'numeric', 'min:0'],
+            'sold' => ['nullable', 'boolean'],
+        ]);
+
+        $sold = (bool) ($request->input('sold') ?? false);
+
+        $car->price = $data['price'];
+        $car->sold_at = $sold ? ($car->sold_at ?? now()) : null;
+        $car->save();
+
+        return redirect()
+            ->route('cars.my-offers')
+            ->with('status', 'Aanbieding bijgewerkt.');
+    }
+
     public function createStepOne(): View
     {
         return view('cars.create-step-1');

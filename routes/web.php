@@ -28,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/my-offers/{car}/sold', [CarController::class, 'markAsSold'])->name('cars.mark-sold');
     Route::patch('/my-offers/{car}/activate', [CarController::class, 'markAsActive'])->name('cars.mark-active');
     Route::delete('/my-offers/{car}', [CarController::class, 'destroy'])->name('cars.destroy');
+    Route::get('/my-offers/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
+    Route::match(['put','patch'], '/my-offers/{car}', [CarController::class, 'update'])->name('cars.update');
 });
 
 require __DIR__.'/auth.php';

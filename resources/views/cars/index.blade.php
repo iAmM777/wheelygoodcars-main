@@ -1,12 +1,12 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="py-4 public-listing-page">
+    <div class="py-4 public-listing-page"> <!--highlighted cars \/-->
         @php
             $featuredCarIds = $cars
                 ->pluck('id')
                 ->shuffle()
-                ->take(max(1, min(2, $cars->count())))
+                ->take(max(1, min(40, $cars->count())))
                 ->all();
         @endphp
 

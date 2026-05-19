@@ -28,6 +28,10 @@
                 <form method="POST" action="{{ route('cars.create.step2.store') }}">
                     @csrf
 
+                    @php
+                        $selectedTags = array_map('intval', old('tags', []));
+                    @endphp
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="brand" class="form-label">Merk</label>
@@ -98,6 +102,38 @@
                             <input id="color" name="color" type="text" class="form-control @error('color') is-invalid @enderror" value="{{ old('color') }}">
                             @error('color')
                                 <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0">Tags</label>
+                                <span class="text-muted small">Selecteer alle tags die bij de auto passen</span>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach ($tags as $tag)
+                                    <div class="tag-filter-pill">
+                                        <input
+                                            type="checkbox"
+                                            class="btn-check"
+                                            id="offer-tag-{{ $tag->id }}"
+                                            name="tags[]"
+                                            value="{{ $tag->id }}"
+                                            @checked(in_array((int) $tag->id, $selectedTags, true))
+                                        >
+                                        <label class="btn btn-outline-secondary btn-sm rounded-pill tag-filter-pill__label" for="offer-tag-{{ $tag->id }}">
+                                            {{ $tag->name }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            @error('tags')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
+                            @enderror
+                            @error('tags.*')
+                                <div class="text-danger small mt-2">{{ $message }}</div>
                             @enderror
                         </div>
                     </div>

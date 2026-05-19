@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Car;
+use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -176,6 +177,7 @@ class CarController extends Controller
 
         return view('cars.create-step-2', [
             'licensePlate' => $licensePlate,
+            'tags' => Tag::query()->orderBy('name')->get(),
         ]);
     }
 
@@ -201,13 +203,23 @@ class CarController extends Controller
             'production_year' => ['nullable', 'integer', 'min:1900', 'max:2100'],
             'weight' => ['nullable', 'integer', 'min:0'],
             'color' => ['nullable', 'string', 'max:255'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', 'exists:tags,id'],
         ]);
 
-        Car::create([
+        $tagIds = $validated['tags'] ?? [];
+
+        unset($validated['tags']);
+
+        $car = Car::create([
             ...$validated,
             'user_id' => $request->user()->id,
             'license_plate' => $licensePlate,
         ]);
+
+        if ($tagIds !== []) {
+            $car->tags()->sync($tagIds);
+        }
 
         $request->session()->forget('car_offer');
 

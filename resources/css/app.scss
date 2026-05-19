@@ -21,7 +21,51 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
     align-items: center;
 }
 
+.offer-progress {
+    .offer-progress-bar {
+        height: 0.8rem;
+        border-radius: 999px;
+        background: #f3e8de;
+        overflow: hidden;
+
+        .progress-bar {
+            border-radius: 999px;
+            background: linear-gradient(90deg, $primary 0%, $secondary 100%);
+        }
+    }
+
+    .offer-step-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 4.5rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        background: #f4ece6;
+        color: #7a5a43;
+    }
+
+    .offer-step-pill--active {
+        background: rgba($primary, 0.15);
+        color: darken($primary, 10%);
+    }
+
+    .offer-step-pill--done {
+        background: rgba($secondary, 0.15);
+        color: darken($secondary, 10%);
+    }
+}
+
 .public-listing-page {
+    .search-panel {
+        border-radius: 1rem;
+        background: linear-gradient(135deg, #ffffff 0%, #fff8f1 100%);
+    }
+
     .car-card {
         position: relative;
         overflow: hidden;
@@ -60,6 +104,14 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         padding: 0.45rem 0.8rem;
         border-radius: 999px 0 0 999px;
         box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+    }
+
+    .car-result {
+        transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .car-result.d-none {
+        display: none !important;
     }
 
     .license-plate-badge {

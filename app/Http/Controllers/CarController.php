@@ -15,7 +15,7 @@ class CarController extends Controller
         $cars = Car::query()
             ->whereNull('sold_at')
             ->latest()
-            ->paginate(12);
+            ->get();
 
         return view('cars.index', compact('cars'));
     }

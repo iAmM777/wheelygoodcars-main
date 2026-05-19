@@ -204,12 +204,12 @@
                 const start = (currentPage - 1) * itemsPerPage;
                 const end = start + itemsPerPage;
                 
-                // Hide all filtered cards
-                filteredCards.forEach((card) => {
+                // Hide all cards first
+                cards.forEach((card) => {
                     card.classList.add('d-none');
                 });
                 
-                // Show only current page cards
+                // Show only current page cards from filtered results
                 filteredCards.slice(start, end).forEach((card) => {
                     card.classList.remove('d-none');
                 });

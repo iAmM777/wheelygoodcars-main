@@ -12,12 +12,7 @@ class CarController extends Controller
 {
     public function index(): View
     {
-        $cars = Car::query()
-            ->whereNull('sold_at')
-            ->latest()
-            ->get();
-
-        return view('cars.index', compact('cars'));
+        return view('cars.index');
     }
 
     public function show(Car $car): View

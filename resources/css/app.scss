@@ -66,6 +66,43 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         background: linear-gradient(135deg, #ffffff 0%, #fff8f1 100%);
     }
 
+    .tag-filter-pill {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .tag-filter-pill__label {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        border: 1px solid rgba($primary, 0.18);
+        background: #fff;
+        color: $dark;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .tag-filter-pill input:checked + .tag-filter-pill__label {
+        background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 8px 18px rgba(255, 122, 32, 0.18);
+    }
+
+    .tag-filter-pill:hover .tag-filter-pill__label {
+        transform: translateY(-1px);
+        border-color: rgba($primary, 0.35);
+    }
+
+    .tag-filter-pill input:focus-visible + .tag-filter-pill__label {
+        outline: 3px solid rgba($primary, 0.2);
+        outline-offset: 2px;
+    }
+
     .car-card {
         position: relative;
         overflow: hidden;

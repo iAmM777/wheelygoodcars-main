@@ -32,6 +32,7 @@ class CarController extends Controller
         $userCars = $request->user()->cars();
 
         $cars = (clone $userCars)
+            ->with('tags')
             ->latest()
             ->paginate(12);
 
@@ -99,7 +100,10 @@ class CarController extends Controller
     {
         $this->ensureOwner($request, $car);
 
-        return view('cars.edit', compact('car'));
+        return view('cars.edit', [
+            'car' => $car->load('tags'),
+            'tags' => Tag::query()->orderBy('name')->get(),
+        ]);
     }
 
     public function update(Request $request, Car $car): RedirectResponse
@@ -109,13 +113,20 @@ class CarController extends Controller
         $data = $request->validate([
             'price' => ['required', 'numeric', 'min:0'],
             'sold' => ['nullable', 'boolean'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['integer', 'exists:tags,id'],
         ]);
 
         $sold = (bool) ($request->input('sold') ?? false);
+        $tagIds = $data['tags'] ?? [];
+
+        unset($data['tags']);
 
         $car->price = $data['price'];
         $car->sold_at = $sold ? ($car->sold_at ?? now()) : null;
         $car->save();
+
+        $car->tags()->sync($tagIds);
 
         return redirect()
             ->route('cars.my-offers')

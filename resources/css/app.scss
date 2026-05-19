@@ -295,6 +295,35 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         font-size: 0.84rem;
     }
 
+    .offer-tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+        max-width: 18rem;
+    }
+
+    .offer-tag-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.3rem 0.6rem;
+        border-radius: 999px;
+        background: #fff3e7;
+        color: darken($primary, 15%);
+        border: 1px solid rgba($primary, 0.14);
+        font-size: 0.78rem;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .offer-tag-separator {
+        display: inline-flex;
+        align-items: center;
+        color: #8a7a6c;
+        font-weight: 600;
+        margin-right: 0.1rem;
+    }
+
     .action-btn {
         min-width: 7.5rem;
         font-weight: 600;

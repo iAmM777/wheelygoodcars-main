@@ -57,6 +57,7 @@
                         <tr>
                             <th>Kenteken</th>
                             <th>Auto</th>
+                            <th>Tags</th>
                             <th>Kilometerstand</th>
                             <th>Prijs</th>
                             <th>Status</th>
@@ -72,6 +73,20 @@
                                 <td>
                                     <strong>{{ $car->brand }} {{ $car->model }}</strong><br>
                                     <small class="text-muted">Bouwjaar {{ $car->production_year ?? '-' }}</small>
+                                </td>
+                                <td>
+                                    @if ($car->tags->isNotEmpty())
+                                        <div class="offer-tag-list">
+                                            @foreach ($car->tags->take(4) as $tag)
+                                                <span class="offer-tag-pill">{{ $tag->name }}</span>
+                                                @if (! $loop->last)
+                                                    <span class="offer-tag-separator">,</span>
+                                                @endif
+                                            @endforeach
+                                        </div>
+                                    @else
+                                        <span class="text-muted small">Geen tags</span>
+                                    @endif
                                 </td>
                                 <td>{{ number_format($car->mileage, 0, ',', '.') }} km</td>
                                 <td>EUR {{ number_format((float) $car->price, 2, ',', '.') }}</td>

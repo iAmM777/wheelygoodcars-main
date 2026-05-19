@@ -114,6 +114,37 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         display: none !important;
     }
 
+    #paginationList {
+        gap: 0.25rem;
+        margin-top: 0.5rem;
+
+        .page-item {
+            &.disabled .page-link {
+                cursor: not-allowed;
+                opacity: 0.5;
+            }
+
+            &.active .page-link {
+                background: linear-gradient(135deg, $primary 0%, $secondary 100%);
+                border-color: transparent;
+                color: #fff;
+            }
+
+            .page-link {
+                border-radius: 0.5rem;
+                color: $primary;
+                border-color: rgba($primary, 0.2);
+                transition: all 0.2s ease;
+
+                &:hover:not(.disabled) {
+                    background: rgba($primary, 0.08);
+                    border-color: rgba($primary, 0.4);
+                    color: darken($primary, 10%);
+                }
+            }
+        }
+    }
+
     .license-plate-badge {
         display: inline-block;
         background-color: #ffcb05;

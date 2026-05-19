@@ -105,6 +105,19 @@
                     </div>
                 @endforeach
             </div>
+            <!-- Pagination Controls -->
+            <nav aria-label="Navigatie pagina's" class="mt-4" id="paginationNav">
+                <ul class="pagination justify-content-center d-none" id="paginationList">
+                    <li class="page-item" id="paginationPrev">
+                        <a class="page-link" href="#" aria-label="Vorige pagina">← Vorige</a>
+                    </li>
+                    <li class="page-item" id="paginationPagePlaceholder"></li>
+                    <li class="page-item" id="paginationNext">
+                        <a class="page-link" href="#" aria-label="Volgende pagina">Volgende →</a>
+                    </li>
+                </ul>
+            </nav>
+
             <div class="card border-0 shadow-sm d-none empty-state mt-4" id="searchEmptyState">
                 <div class="card-body py-5 text-center">
                     <p class="h5 fw-semibold mb-2">Geen auto's gevonden</p>
@@ -123,7 +136,16 @@
             const visibleCount = document.getElementById('carsVisibleCount');
             const resultHint = document.getElementById('searchResultHint');
             const emptyState = document.getElementById('searchEmptyState');
+            const paginationNav = document.getElementById('paginationNav');
+            const paginationList = document.getElementById('paginationList');
+            const paginationPagePlaceholder = document.getElementById('paginationPagePlaceholder');
+            const paginationPrev = document.getElementById('paginationPrev');
+            const paginationNext = document.getElementById('paginationNext');
             const cards = Array.from(document.querySelectorAll('[data-car-card]'));
+            
+            const itemsPerPage = 12;
+            let currentPage = 1;
+            let filteredCards = [];
 
             const updateVisibleCount = (count) => {
                 if (visibleCount) {
@@ -131,20 +153,81 @@
                 }
             };
 
+            const goToPage = (page) => {
+                const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+                if (page >= 1 && page <= totalPages) {
+                    currentPage = page;
+                    displayPage();
+                    updatePaginationUI();
+                    window.scrollTo({top: 0, behavior: 'smooth'});
+                }
+            };
+
+            const updatePaginationUI = () => {
+                const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+                
+                if (totalPages <= 1) {
+                    paginationList.classList.add('d-none');
+                    return;
+                }
+                
+                paginationList.classList.remove('d-none');
+                
+                // Clear and rebuild page number buttons
+                paginationPagePlaceholder.innerHTML = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    const li = document.createElement('li');
+                    li.className = `page-item ${i === currentPage ? 'active' : ''}`;
+                    const link = document.createElement('a');
+                    link.className = 'page-link';
+                    link.href = '#';
+                    link.textContent = i;
+                    link.dataset.page = i;
+                    li.appendChild(link);
+                    paginationPagePlaceholder.appendChild(li);
+                }
+                
+                // Update disabled state for prev/next
+                const isPrevDisabled = currentPage === 1;
+                const isNextDisabled = currentPage === totalPages;
+                
+                paginationPrev.classList.toggle('disabled', isPrevDisabled);
+                paginationNext.classList.toggle('disabled', isNextDisabled);
+            };
+
+            const displayPage = () => {
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                
+                // Hide all filtered cards
+                filteredCards.forEach((card) => {
+                    card.classList.add('d-none');
+                });
+                
+                // Show only current page cards
+                filteredCards.slice(start, end).forEach((card) => {
+                    card.classList.remove('d-none');
+                });
+            };
+
             const filterCars = () => {
                 const query = (searchInput?.value || '').trim().toLowerCase();
+                filteredCards = [];
                 let visible = 0;
 
                 cards.forEach((card) => {
                     const searchValue = card.getAttribute('data-search-value') || '';
                     const matches = query === '' || searchValue.includes(query);
-                    card.classList.toggle('d-none', !matches);
                     if (matches) {
+                        filteredCards.push(card);
                         visible += 1;
                     }
                 });
 
+                currentPage = 1;
+                displayPage();
                 updateVisibleCount(visible);
+                updatePaginationUI();
 
                 if (resultHint) {
                     resultHint.textContent = query === ''
@@ -156,6 +239,34 @@
                     emptyState.classList.toggle('d-none', visible !== 0);
                 }
             };
+
+            // Attach pagination click handlers (only once, at initialization)
+            if (paginationPrev) {
+                paginationPrev.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if (currentPage > 1) {
+                        goToPage(currentPage - 1);
+                    }
+                });
+            }
+
+            if (paginationNext) {
+                paginationNext.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const totalPages = Math.ceil(filteredCards.length / itemsPerPage);
+                    if (currentPage < totalPages) {
+                        goToPage(currentPage + 1);
+                    }
+                });
+            }
+
+            // Event delegation for page number buttons
+            paginationPagePlaceholder.addEventListener('click', function(e) {
+                if (e.target.classList.contains('page-link') && e.target.dataset.page) {
+                    e.preventDefault();
+                    goToPage(parseInt(e.target.dataset.page, 10));
+                }
+            });
 
             if (searchInput) {
                 searchInput.addEventListener('input', filterCars);

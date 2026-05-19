@@ -135,7 +135,7 @@
                 </div>
 
                 <div class="mt-4 d-flex justify-content-center">
-                    {{ $cars->links('pagination::bootstrap-5') }}
+                    {{ $cars->links() }}
                 </div>
             @endif
         @endif

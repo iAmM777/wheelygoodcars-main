@@ -107,11 +107,10 @@
             </div>
             <!-- Pagination Controls -->
             <nav aria-label="Navigatie pagina's" class="mt-4" id="paginationNav">
-                <ul class="pagination justify-content-center d-none" id="paginationList">
+                <ul class="pagination justify-content-center d-flex flex-wrap d-none" id="paginationList">
                     <li class="page-item" id="paginationPrev">
                         <a class="page-link" href="#" aria-label="Vorige pagina">← Vorige</a>
                     </li>
-                    <li class="page-item" id="paginationPagePlaceholder"></li>
                     <li class="page-item" id="paginationNext">
                         <a class="page-link" href="#" aria-label="Volgende pagina">Volgende →</a>
                     </li>
@@ -138,7 +137,6 @@
             const emptyState = document.getElementById('searchEmptyState');
             const paginationNav = document.getElementById('paginationNav');
             const paginationList = document.getElementById('paginationList');
-            const paginationPagePlaceholder = document.getElementById('paginationPagePlaceholder');
             const paginationPrev = document.getElementById('paginationPrev');
             const paginationNext = document.getElementById('paginationNext');
             const cards = Array.from(document.querySelectorAll('[data-car-card]'));
@@ -173,8 +171,11 @@
                 
                 paginationList.classList.remove('d-none');
                 
-                // Clear and rebuild page number buttons
-                paginationPagePlaceholder.innerHTML = '';
+                // Clear and rebuild page number buttons (between prev and next)
+                // Remove all existing page items (keep only prev/next)
+                const existingPageItems = paginationList.querySelectorAll('.page-item:not(#paginationPrev):not(#paginationNext)');
+                existingPageItems.forEach(item => item.remove());
+                
                 for (let i = 1; i <= totalPages; i++) {
                     const li = document.createElement('li');
                     li.className = `page-item ${i === currentPage ? 'active' : ''}`;
@@ -183,8 +184,12 @@
                     link.href = '#';
                     link.textContent = i;
                     link.dataset.page = i;
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        goToPage(i);
+                    });
                     li.appendChild(link);
-                    paginationPagePlaceholder.appendChild(li);
+                    paginationList.insertBefore(li, paginationNext);
                 }
                 
                 // Update disabled state for prev/next
@@ -259,14 +264,6 @@
                     }
                 });
             }
-
-            // Event delegation for page number buttons
-            paginationPagePlaceholder.addEventListener('click', function(e) {
-                if (e.target.classList.contains('page-link') && e.target.dataset.page) {
-                    e.preventDefault();
-                    goToPage(parseInt(e.target.dataset.page, 10));
-                }
-            });
 
             if (searchInput) {
                 searchInput.addEventListener('input', filterCars);

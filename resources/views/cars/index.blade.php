@@ -2,6 +2,14 @@
 
 @section('content')
     <div class="py-4 public-listing-page">
+        @php
+            $featuredCarIds = $cars->getCollection()
+                ->pluck('id')
+                ->shuffle()
+                ->take(max(1, min(2, $cars->count())))
+                ->all();
+        @endphp
+
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
                 <h1 class="h3 mb-1">Alle beschikbare auto's</h1>
@@ -27,12 +35,17 @@
                 </div>
             </div>
         @else
-            <div class="row g-3">
+            <div class="row g-4 align-items-stretch">
                 @foreach ($cars as $car)
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <a href="{{ route('cars.show', $car) }}" class="text-decoration-none">
-                            <div class="card h-100 car-card shadow-sm border-0">
-                                <div class="card-body d-flex flex-column">
+                    @php($isFeatured = in_array($car->id, $featuredCarIds, true))
+                    <div class="col-12 col-md-6 {{ $isFeatured ? 'col-lg-6' : 'col-lg-4' }}">
+                        <a href="{{ route('cars.show', $car) }}" class="text-decoration-none d-block h-100">
+                            <div class="card h-100 car-card shadow-sm border-0 {{ $isFeatured ? 'car-card--featured' : '' }}">
+                                <div class="card-body d-flex flex-column position-relative">
+                                    @if ($isFeatured)
+                                        <span class="car-card-ribbon">Uitgelicht</span>
+                                    @endif
+
                                     <div class="mb-3">
                                         <span class="badge text-bg-success">Te koop</span>
                                     </div>

@@ -38,20 +38,21 @@
                     >
                 </div>
 
-                <div class="d-flex flex-wrap gap-2 align-items-center">
+                <div class="d-flex flex-wrap gap-2 align-items-center tag-filter-group">
                     <span class="text-muted small me-2">Filter op tags:</span>
                     @foreach ($tags as $tag)
-                        <label class="tag-filter-pill">
+                        <div class="tag-filter-pill" wire:key="tag-filter-{{ $tag->id }}">
                             <input
                                 type="checkbox"
                                 class="btn-check"
+                                id="tag-filter-{{ $tag->id }}"
                                 value="{{ $tag->id }}"
                                 wire:model.live="selectedTags"
                             >
-                            <span class="tag-filter-pill__label">
+                            <label class="btn btn-outline-secondary btn-sm rounded-pill tag-filter-pill__label" for="tag-filter-{{ $tag->id }}">
                                 {{ $tag->name }}
-                            </span>
-                        </label>
+                            </label>
+                        </div>
                     @endforeach
                 </div>
 

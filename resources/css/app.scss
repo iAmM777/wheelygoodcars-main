@@ -72,8 +72,6 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
     }
 
     .tag-filter-pill__label {
-        display: inline-flex;
-        align-items: center;
         padding: 0.45rem 0.8rem;
         border-radius: 999px;
         border: 1px solid rgba($primary, 0.18);
@@ -84,6 +82,7 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         cursor: pointer;
         transition: all 0.2s ease;
         user-select: none;
+        white-space: nowrap;
     }
 
     .tag-filter-pill input:checked + .tag-filter-pill__label {
@@ -101,6 +100,10 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
     .tag-filter-pill input:focus-visible + .tag-filter-pill__label {
         outline: 3px solid rgba($primary, 0.2);
         outline-offset: 2px;
+    }
+
+    .tag-filter-group {
+        line-height: 1.2;
     }
 
     .car-card {

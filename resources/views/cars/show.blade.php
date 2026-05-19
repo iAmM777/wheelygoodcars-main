@@ -116,4 +116,42 @@
         </div>
     </div>
 </div>
+
+<!-- Toast Container -->
+<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+    <div id="viewsToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="min-width: 380px;">
+        <div class="toast-header bg-info text-white">
+            <strong class="me-auto" style="font-size: 1.15rem;">👀 Druk!</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" style="font-size: 1.2rem; padding: 1.5rem; font-weight: 500;">
+            {{ $car->views }} klanten bekeken deze auto vandaag! 🚗💨
+        </div>
+    </div>
+</div>
+
+<script>
+    function showViewsToast() {
+        const toastElement = document.getElementById('viewsToast');
+        
+        if (toastElement) {
+            // Use simple display instead of Bootstrap Toast API
+            toastElement.classList.add('show');
+            toastElement.style.display = 'block';
+        }
+    }
+
+    // Wait for DOM to be fully ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                showViewsToast();
+                }, 10000);
+        });
+    } else {
+        setTimeout(function() {
+            showViewsToast();
+        }, 10000);
+    }
+</script>
 @endsection

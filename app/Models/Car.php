@@ -24,6 +24,7 @@ class Car extends Model
         'color',
         'image',
         'sold_at',
+        'views',
     ];
 
     protected $casts = [

@@ -25,6 +25,9 @@ class CarController extends Controller
         // Prevent viewing sold cars in detail (guests shouldn't see them)
         abort_if($car->sold_at !== null, 404);
 
+        // Increment view count
+        $car->increment('views');
+
         return view('cars.show', compact('car'));
     }
 

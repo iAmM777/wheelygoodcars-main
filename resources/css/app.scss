@@ -66,6 +66,12 @@ $font-family-sans-serif: 'Open Sans', sans-serif;
         background: linear-gradient(135deg, #ffffff 0%, #fff8f1 100%);
     }
 
+    // Ensure tag badges have consistent spacing in the public listing
+    .badge.tag-badge {
+        margin-right: 0.35rem;
+        margin-bottom: 0.25rem;
+    }
+
     .tag-filter-pill {
         display: inline-flex;
         align-items: center;

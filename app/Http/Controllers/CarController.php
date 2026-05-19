@@ -24,6 +24,9 @@ class CarController extends Controller
         // Increment view count
         $car->increment('views');
 
+        // Ensure tags are loaded for the detail view
+        $car->load('tags');
+
         return view('cars.show', compact('car'));
     }
 

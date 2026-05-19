@@ -32,6 +32,13 @@
                         <div>
                             <h1 class="card-title mb-0">{{ $car->brand }} {{ $car->model }}</h1>
                             <small class="text-muted">Bouwjaar {{ $car->production_year ?? 'onbekend' }}</small>
+                            @if($car->tags->isNotEmpty())
+                                <div class="mt-3">
+                                    @foreach($car->tags as $tag)
+                                        <span class="badge tag-badge bg-light text-dark border">{{ $tag->name }}</span>
+                                    @endforeach
+                                </div>
+                            @endif
                         </div>
                         <div class="text-end">
                             <span class="badge bg-success p-3" style="font-size: 1.25rem;">

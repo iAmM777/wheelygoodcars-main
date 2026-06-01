@@ -63,6 +63,32 @@ class CarController extends Controller
         return view('cars.my-offers', compact('cars', 'stats'));
     }
 
+    public function tagStatistics(): View
+    {
+        $tags = Tag::query()
+            ->withCount([
+                'cars',
+                'cars as active_cars_count' => function ($query): void {
+                    $query->whereNull('sold_at');
+                },
+                'cars as sold_cars_count' => function ($query): void {
+                    $query->whereNotNull('sold_at');
+                },
+            ])
+            ->orderByDesc('cars_count')
+            ->orderBy('name')
+            ->get();
+
+        $totals = [
+            'tags' => $tags->count(),
+            'usage' => $tags->sum('cars_count'),
+            'active' => $tags->sum('active_cars_count'),
+            'sold' => $tags->sum('sold_cars_count'),
+        ];
+
+        return view('cars.tag-statistics', compact('tags', 'totals'));
+    }
+
     public function markAsSold(Request $request, Car $car): RedirectResponse|JsonResponse
     {
         $this->ensureOwner($request, $car);

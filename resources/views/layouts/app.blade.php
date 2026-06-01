@@ -20,6 +20,7 @@
                         <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.index') }}">Alle auto's</a></li>
                         @auth
                             <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.my-offers') }}">Mijn aanbod</a></li>
+                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('tags.statistics') }}">Tag statistieken</a></li>
                             <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.create.step1') }}">Aanbod plaatsen</a></li>
                         @endauth
                     </ul>

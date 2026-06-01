@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/my-offers/{car}', [CarController::class, 'destroy'])->name('cars.destroy');
     Route::get('/my-offers/{car}/edit', [CarController::class, 'edit'])->name('cars.edit');
     Route::match(['put','patch'], '/my-offers/{car}', [CarController::class, 'update'])->name('cars.update');
+
+    Route::get('/tag-statistieken', [CarController::class, 'tagStatistics'])->name('tags.statistics');
 });
 
 require __DIR__.'/auth.php';

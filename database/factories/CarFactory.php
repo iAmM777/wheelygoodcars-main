@@ -33,6 +33,8 @@ class CarFactory extends Factory
             'image' => null,
             'sold_at' => null,
             'views' => fake()->numberBetween(0, 200),
+            'views_today' => fake()->numberBetween(0, 25),
+            'views_today_date' => fake()->boolean(60) ? now()->toDateString() : null,
         ];
     }
 }

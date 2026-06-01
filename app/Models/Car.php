@@ -23,14 +23,20 @@ class Car extends Model
         'production_year',
         'weight',
         'color',
+        'views_today',
+        'views_today_date',
         'image',
         'sold_at',
         'views',
+        'views_today',
+        'views_today_date',
+        'views_today_date' => 'date',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'sold_at' => 'datetime',
+        'views_today_date' => 'date',
     ];
 
     public function user(): BelongsTo

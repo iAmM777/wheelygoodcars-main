@@ -19,9 +19,12 @@ Route::get('/', [CarController::class, 'index'])->name('home');
 Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
 Route::get('/cars/{car}/pdf', [CarController::class, 'pdf'])->name('cars.pdf');
-Route::get('/opvallende-aanbieders', [AdminController::class, 'suspiciousProviders'])->middleware('auth')->name('admin.suspicious-providers');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/dashboard/data', [AdminController::class, 'dashboardData'])->name('admin.dashboard.data');
+    Route::get('/opvallende-aanbieders', [AdminController::class, 'suspiciousProviders'])->name('admin.suspicious-providers');
+
     Route::get('/cars/create/step-1', [CarController::class, 'createStepOne'])->name('cars.create.step1');
     Route::post('/cars/create/step-1', [CarController::class, 'storeStepOne'])->name('cars.create.step1.store');
 

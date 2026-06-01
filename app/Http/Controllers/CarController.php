@@ -26,6 +26,15 @@ class CarController extends Controller
         // Increment view count
         $car->increment('views');
 
+        if ($car->views_today_date?->isToday()) {
+            $car->increment('views_today');
+        } else {
+            $car->forceFill([
+                'views_today' => 1,
+                'views_today_date' => now()->toDateString(),
+            ])->save();
+        }
+
         // Ensure tags are loaded for the detail view
         $car->load(['tags', 'user']);
 

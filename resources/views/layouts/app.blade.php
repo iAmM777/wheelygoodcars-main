@@ -8,7 +8,8 @@
         @livewireStyles
         @vite(['resources/css/app.scss', 'resources/js/app.js'])
     </head>
-    <body>
+    <body class="@yield('body-class')">
+        @unless(request()->routeIs('admin.dashboard'))
         <nav class="navbar navbar-expand-md navbar-dark d-print-none bg-black">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{{ route('home') }}"><strong class="text-primary">Wheely</strong> good cars<strong class="text-primary">!</strong></a>
@@ -19,6 +20,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.index') }}">Alle auto's</a></li>
                         @auth
+                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                             <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.my-offers') }}">Mijn aanbod</a></li>
                             <li class="nav-item"><a class="nav-link text-light" href="{{ route('tags.statistics') }}">Tag statistieken</a></li>
                             <li class="nav-item"><a class="nav-link text-light" href="{{ route('admin.suspicious-providers') }}">Opvallende aanbieders</a></li>
@@ -37,8 +39,9 @@
                 </div>
             </div>
         </nav>
+        @endunless
 
-        <div class="container">
+        <div class="{{ request()->routeIs('admin.dashboard') ? 'container-fluid p-0' : 'container' }}">
             @yield('content')
         </div>
 

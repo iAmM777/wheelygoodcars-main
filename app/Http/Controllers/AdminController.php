@@ -2,11 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Car;
 use App\Models\User;
+use Carbon\CarbonPeriod;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Carbon;
 
 class AdminController extends Controller
 {
+    public function dashboard(): View
+    {
+        return view('admin.dashboard', [
+            'dashboard' => $this->buildDashboardPayload(),
+        ]);
+    }
+
+    public function dashboardData(): JsonResponse
+    {
+        return response()->json($this->buildDashboardPayload());
+    }
+
     public function suspiciousProviders(): View
     {
         $providers = User::query()
@@ -113,5 +129,80 @@ class AdminController extends Controller
         ];
 
         return view('admin.suspicious-providers', compact('providers', 'summary'));
+    }
+
+    private function buildDashboardPayload(): array
+    {
+        $today = Carbon::today();
+        $periodStart = $today->copy()->subDays(13);
+        $period = collect(CarbonPeriod::create($periodStart, $today))->map(fn (Carbon $date): string => $date->toDateString())->values();
+
+        $totalCars = Car::query()->count();
+        $soldCars = Car::query()->whereNotNull('sold_at')->count();
+        $activeCars = $totalCars - $soldCars;
+        $offeredToday = Car::query()->whereDate('created_at', $today)->count();
+        $providers = User::query()->has('cars')->count();
+        $viewsToday = (int) Car::query()->whereDate('views_today_date', $today)->sum('views_today');
+        $averageCarsPerProvider = $providers > 0 ? round($totalCars / $providers, 1) : 0.0;
+        $soldPercentage = $totalCars > 0 ? round(($soldCars / $totalCars) * 100, 1) : 0.0;
+
+        $offersByDay = Car::query()
+            ->selectRaw('DATE(created_at) as day, COUNT(*) as total')
+            ->whereBetween('created_at', [$periodStart->startOfDay(), $today->endOfDay()])
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $soldByDay = Car::query()
+            ->selectRaw('DATE(sold_at) as day, COUNT(*) as total')
+            ->whereNotNull('sold_at')
+            ->whereBetween('sold_at', [$periodStart->startOfDay(), $today->endOfDay()])
+            ->groupBy('day')
+            ->pluck('total', 'day');
+
+        $viewsByDay = Car::query()
+            ->selectRaw('DATE(views_today_date) as day, SUM(views_today) as total')
+            ->whereNotNull('views_today_date')
+            ->whereBetween('views_today_date', [$periodStart, $today])
+            ->groupBy('day')
+            ->pluck('total', 'day')
+            ->all();
+
+        $topProviders = User::query()
+            ->has('cars')
+            ->withCount('cars')
+            ->orderByDesc('cars_count')
+            ->orderBy('name')
+            ->limit(5)
+            ->get();
+
+        return [
+            'generated_at' => now()->toIso8601String(),
+            'metrics' => [
+                'total_cars' => $totalCars,
+                'sold_cars' => $soldCars,
+                'active_cars' => $activeCars,
+                'today_offered' => $offeredToday,
+                'providers' => $providers,
+                'today_views' => $viewsToday,
+                'average_cars_per_provider' => $averageCarsPerProvider,
+                'sold_ratio' => $soldPercentage,
+            ],
+            'charts' => [
+                'status' => [
+                    'labels' => ['Actief', 'Verkocht'],
+                    'values' => [$activeCars, $soldCars],
+                ],
+                'daily' => [
+                    'labels' => $period->all(),
+                    'offers' => $period->map(fn (string $date): int => (int) ($offersByDay[$date] ?? 0))->all(),
+                    'sold' => $period->map(fn (string $date): int => (int) ($soldByDay[$date] ?? 0))->all(),
+                    'views' => $period->map(fn (string $date): int => (int) ($viewsByDay[$date] ?? 0))->all(),
+                ],
+                'providers' => [
+                    'labels' => $topProviders->pluck('name')->all(),
+                    'values' => $topProviders->pluck('cars_count')->all(),
+                ],
+            ],
+        ];
     }
 }

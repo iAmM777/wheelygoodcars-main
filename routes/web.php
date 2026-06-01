@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CarController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,6 +19,7 @@ Route::get('/', [CarController::class, 'index'])->name('home');
 Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
 Route::get('/cars/{car}/pdf', [CarController::class, 'pdf'])->name('cars.pdf');
+Route::get('/opvallende-aanbieders', [AdminController::class, 'suspiciousProviders'])->middleware('auth')->name('admin.suspicious-providers');
 
 Route::middleware('auth')->group(function () {
     Route::get('/cars/create/step-1', [CarController::class, 'createStepOne'])->name('cars.create.step1');

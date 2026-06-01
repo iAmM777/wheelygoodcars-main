@@ -4,7 +4,10 @@
     <div class="py-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h1 class="h3 mb-0">Bewerk aanbieding</h1>
-            <a href="{{ route('cars.my-offers') }}" class="btn btn-outline-secondary">Terug</a>
+            <div class="d-flex gap-2">
+                <a href="{{ route('cars.pdf', $car) }}" target="_blank" rel="noopener" class="btn btn-outline-primary">Genereer PDF</a>
+                <a href="{{ route('cars.my-offers') }}" class="btn btn-outline-secondary">Terug</a>
+            </div>
         </div>
 
         <div class="card border-0 shadow-sm">

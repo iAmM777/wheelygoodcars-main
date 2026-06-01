@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [CarController::class, 'index'])->name('home');
 Route::get('/cars', [CarController::class, 'index'])->name('cars.index');
 Route::get('/cars/{car}', [CarController::class, 'show'])->name('cars.show');
+Route::get('/cars/{car}/pdf', [CarController::class, 'pdf'])->name('cars.pdf');
 
 Route::middleware('auth')->group(function () {
     Route::get('/cars/create/step-1', [CarController::class, 'createStepOne'])->name('cars.create.step1');

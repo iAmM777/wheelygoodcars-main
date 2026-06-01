@@ -96,6 +96,23 @@
                         </div>
                     </div>
 
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <h6 class="fw-bold text-uppercase text-muted mb-0" style="font-size: 0.85rem; letter-spacing: 0.05em;">
+                                📄 PDF voor printen
+                            </h6>
+                            <a href="{{ route('cars.pdf', $car) }}" class="btn btn-outline-primary btn-sm" target="_blank" rel="noopener">Open PDF</a>
+                        </div>
+                        <div class="card border-0 bg-light rounded-4 overflow-hidden shadow-sm">
+                            <div class="card-body">
+                                <p class="text-muted mb-3">Deze PDF bevat de auto-gegevens in een printvriendelijk format voor in de voorruit of showroom.</p>
+                                <div class="ratio ratio-16x9 bg-white border rounded-3">
+                                    <iframe src="{{ route('cars.pdf', $car) }}" title="PDF van {{ $car->brand }} {{ $car->model }}" loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Created At -->
                     <div class="text-muted small border-top pt-3">
                         📅 Aangeboden op {{ $car->created_at->format('d F Y') }}

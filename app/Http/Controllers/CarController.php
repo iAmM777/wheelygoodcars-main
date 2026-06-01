@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Car;
 use App\Models\Tag;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class CarController extends Controller
@@ -25,9 +27,22 @@ class CarController extends Controller
         $car->increment('views');
 
         // Ensure tags are loaded for the detail view
-        $car->load('tags');
+        $car->load(['tags', 'user']);
 
         return view('cars.show', compact('car'));
+    }
+
+    public function pdf(Car $car)
+    {
+        abort_if($car->sold_at !== null, 404);
+
+        $car->loadMissing(['tags', 'user']);
+
+        $fileName = Str::slug(trim($car->brand.' '.$car->model.' '.$car->license_plate)).'.pdf';
+
+        return Pdf::loadView('cars.pdf', [
+            'car' => $car,
+        ])->stream($fileName);
     }
 
     public function myOffers(Request $request): View

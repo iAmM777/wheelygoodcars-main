@@ -47,4 +47,26 @@ class CarPdfGenerationTest extends TestCase
             ->assertSee('PDF voor printen')
             ->assertSee(route('cars.pdf', $car));
     }
+
+    public function test_my_offers_and_show_pages_display_view_counts(): void
+    {
+        $user = User::factory()->create();
+
+        $car = Car::factory()->create([
+            'user_id' => $user->id,
+            'views' => 12,
+            'views_today' => 3,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('cars.my-offers'))
+            ->assertOk()
+            ->assertSee('Views');
+
+        $this->actingAs($user)
+            ->get(route('cars.show', $car))
+            ->assertOk()
+            ->assertSee('Totale views')
+            ->assertSee('Views vandaag');
+    }
 }

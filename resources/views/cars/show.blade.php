@@ -94,6 +94,25 @@
                         </div>
                     </div>
 
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                            <div class="card border-0 bg-light rounded-4 h-100">
+                                <div class="card-body text-center py-4">
+                                    <div class="text-uppercase small text-muted mb-1">Totale views</div>
+                                    <div class="display-6 fw-bold mb-0">{{ number_format($car->views, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="card border-0 bg-light rounded-4 h-100">
+                                <div class="card-body text-center py-4">
+                                    <div class="text-uppercase small text-muted mb-1">Views vandaag</div>
+                                    <div class="display-6 fw-bold mb-0">{{ number_format($car->views_today, 0, ',', '.') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Additional Details -->
                     <div class="row mb-4">
                         <div class="col-md-6 mb-3">

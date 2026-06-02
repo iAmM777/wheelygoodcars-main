@@ -59,6 +59,7 @@
                             <th>Auto</th>
                             <th>Tags</th>
                             <th>Kilometerstand</th>
+                            <th>Views</th>
                             <th>Prijs</th>
                             <th>Status</th>
                             <th class="text-end">Beheer</th>
@@ -89,6 +90,10 @@
                                     @endif
                                 </td>
                                 <td>{{ number_format($car->mileage, 0, ',', '.') }} km</td>
+                                <td>
+                                    <strong>{{ number_format($car->views, 0, ',', '.') }}</strong><br>
+                                    <small class="text-muted">totaal</small>
+                                </td>
                                 <td>EUR {{ number_format((float) $car->price, 2, ',', '.') }}</td>
                                 <td data-status-cell>
                                     @if ($car->sold_at)

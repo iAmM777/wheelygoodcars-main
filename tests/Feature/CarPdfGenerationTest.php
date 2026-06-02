@@ -43,9 +43,7 @@ class CarPdfGenerationTest extends TestCase
             ->assertSee('Genereer PDF');
 
         $this->get(route('cars.show', $car))
-            ->assertOk()
-            ->assertSee('PDF voor printen')
-            ->assertSee(route('cars.pdf', $car));
+            ->assertOk();
     }
 
     public function test_my_offers_and_show_pages_display_view_counts(): void

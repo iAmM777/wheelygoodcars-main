@@ -20,13 +20,13 @@
                     <ul class="navbar-nav">
                         <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.index') }}">Alle auto's</a></li>
                         @auth
+                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.my-offers') }}">Mijn aanbod</a></li>
+                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.create.step1') }}">Aanbod plaatsen</a></li>
+
                             @if(auth()->user()->admin)
-                                <li class="nav-item"><a class="nav-link text-light" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                                 <li class="nav-item"><a class="nav-link text-light" href="{{ route('tags.statistics') }}">Tag statistieken</a></li>
                                 <li class="nav-item"><a class="nav-link text-light" href="{{ route('admin.suspicious-providers') }}">Opvallende aanbieders</a></li>
                             @endif
-                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.my-offers') }}">Mijn aanbod</a></li>
-                            <li class="nav-item"><a class="nav-link text-light" href="{{ route('cars.create.step1') }}">Aanbod plaatsen</a></li>
                         @endauth
                     </ul>
                     <ul class="navbar-nav">
@@ -35,6 +35,9 @@
                             <li class="nav-item"><a class="nav-link text-secondary" href="{{ route('login') }}">Inloggen</a></li>
                         @endguest
                         @auth
+                            @if(auth()->user()->admin)
+                                <li class="nav-item"><a class="nav-link text-light" href="{{ route('admin.dashboard') }}">Dashboard</a></li>
+                            @endif
                             <li class="nav-item"><a class="nav-link text-secondary"   href="{{ route('logout') }}">Uitloggen</a></li>
                         @endauth
                     </ul>

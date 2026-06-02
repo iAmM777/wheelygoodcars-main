@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Car;
 use App\Models\Tag;
+use App\Services\RdwService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,10 @@ use Illuminate\Filesystem\Filesystem;
 
 class CarController extends Controller
 {
+    public function __construct(private readonly RdwService $rdwService)
+    {
+    }
+
     public function index(): View
     {
         return view('cars.index');
@@ -305,16 +310,24 @@ class CarController extends Controller
                 ]);
         }
 
-        session(['car_offer.license_plate' => $licensePlate]);
+        $prefillData = $this->rdwService->fetchCarData($licensePlate);
+
+        session([
+            'car_offer.license_plate' => $licensePlate,
+            'car_offer.prefill' => $prefillData,
+        ]);
 
         return redirect()
             ->route('cars.create.step2')
-            ->with('status', 'Kenteken gecontroleerd. Vul nu de overige gegevens in.');
+            ->with('status', $prefillData === []
+                ? 'Kenteken gecontroleerd. Vul nu de overige gegevens in.'
+                : 'Kenteken gecontroleerd. We hebben alvast een deel van de auto-informatie ingevuld.');
     }
 
     public function createStepTwo(): View|RedirectResponse
     {
         $licensePlate = session('car_offer.license_plate');
+        $prefillData = session('car_offer.prefill', []);
 
         if (! $licensePlate) {
             return redirect()
@@ -326,6 +339,7 @@ class CarController extends Controller
 
         return view('cars.create-step-2', [
             'licensePlate' => $licensePlate,
+            'prefillData' => is_array($prefillData) ? $prefillData : [],
             'tags' => Tag::query()->orderBy('name')->get(),
         ]);
     }

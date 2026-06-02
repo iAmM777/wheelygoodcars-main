@@ -7,7 +7,6 @@
                 <h1 class="h3 mb-1">Tag statistieken</h1>
                 <p class="text-muted mb-0">Overzicht van hoe vaak tags gebruikt worden, uitgesplitst naar actieve en verkochte auto's.</p>
             </div>
-            <a href="{{ route('cars.my-offers') }}" class="btn btn-outline-secondary">Terug naar mijn aanbod</a>
         </div>
 
         <div class="row g-3 mb-4">

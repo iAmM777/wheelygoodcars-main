@@ -7,7 +7,6 @@
                 <h1 class="h3 mb-1">Opvallende aanbieders</h1>
                 <p class="text-muted mb-0">Lijst van aanbieders met signalen die handmatige review verdienen.</p>
             </div>
-            <a href="{{ route('cars.my-offers') }}" class="btn btn-outline-secondary">Terug naar mijn aanbod</a>
         </div>
 
         <div class="row g-3 mb-4">

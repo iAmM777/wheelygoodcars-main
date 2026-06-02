@@ -12,9 +12,23 @@
             <!-- Car Detail Card -->
             <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
                 <!-- Image Section -->
-                <div class="car-detail-image-wrapper bg-light d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
-                    @if($car->image)
-                        <img src="{{ asset('storage/' . $car->image) }}" alt="{{ $car->brand }} {{ $car->model }}" class="img-fluid" style="height: 100%; object-fit: cover;">
+                    <div class="car-detail-image-wrapper bg-light d-flex align-items-center justify-content-center" style="height: 400px; background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+                    @php
+                        $imageSrc = null;
+                        if ($car->image) {
+                            $basename = basename($car->image);
+                            $publicCopy = public_path('cars/' . $basename);
+                            if (file_exists($publicCopy)) {
+                                $imageSrc = asset('cars/' . $basename);
+                            } else {
+                                $imageSrc = asset('storage/' . $car->image);
+                            }
+                        }
+                    @endphp
+                    @if($imageSrc)
+                        <a href="#" id="show-image-link" aria-label="Bekijk volledige afbeelding">
+                            <img src="{{ $imageSrc }}" alt="{{ $car->brand }} {{ $car->model }}" id="show-image-preview" class="img-fluid" style="height: 100%; object-fit: cover; cursor:zoom-in;">
+                        </a>
                     @else
                         <div class="text-center text-muted">
                             <svg width="80" height="80" fill="currentColor" viewBox="0 0 16 16" style="margin-bottom: 1rem;">
@@ -179,3 +193,75 @@
     }
 </script>
 @endsection
+
+@push('scripts')
+<script>
+    (function(){
+        const preview = document.getElementById('show-image-preview');
+        const link = document.getElementById('show-image-link');
+        if (!preview || !link) return;
+
+        const lightbox = document.createElement('div');
+        lightbox.id = 'imageLightboxShow';
+        Object.assign(lightbox.style, {
+            position: 'fixed',
+            inset: '0',
+            background: 'rgba(0,0,0,0.8)',
+            display: 'none',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '2rem'
+        });
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = '\u2715';
+        Object.assign(closeBtn.style, {
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            background: 'rgba(0,0,0,0.6)',
+            color: '#fff',
+            border: 'none',
+            width: '36px',
+            height: '36px',
+            borderRadius: '18px',
+            fontSize: '18px',
+            cursor: 'pointer'
+        });
+
+        const img = document.createElement('img');
+        img.alt = preview.alt || '';
+        Object.assign(img.style, {
+            maxWidth: '100%',
+            maxHeight: '100%',
+            borderRadius: '6px',
+            boxShadow: '0 6px 30px rgba(0,0,0,0.6)'
+        });
+
+        lightbox.appendChild(closeBtn);
+        lightbox.appendChild(img);
+        document.body.appendChild(lightbox);
+
+        function openLightbox(e){
+            e.preventDefault();
+            const src = preview.getAttribute('src');
+            img.src = src;
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(){
+            lightbox.style.display = 'none';
+            img.src = '';
+            document.body.style.overflow = '';
+        }
+
+        link.addEventListener('click', openLightbox);
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e){ if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
+    })();
+</script>
+@endpush

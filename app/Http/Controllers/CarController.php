@@ -10,6 +10,9 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Filesystem\Filesystem;
 
 class CarController extends Controller
 {
@@ -168,6 +171,7 @@ class CarController extends Controller
             'sold' => ['nullable', 'boolean'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'exists:tags,id'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $sold = (bool) ($request->input('sold') ?? false);
@@ -180,6 +184,87 @@ class CarController extends Controller
         $car->save();
 
         $car->tags()->sync($tagIds);
+
+        // handle replacement image
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            if (! $file || ! $file->isValid()) {
+                return back()->withErrors(['image' => 'Upload mislukt. Probeer het opnieuw.'])->withInput();
+            }
+
+            if ($car->image && Storage::disk('public')->exists($car->image)) {
+                // delete from public disk
+                Storage::disk('public')->delete($car->image);
+                // also delete public fallback copy if exists
+                $oldBasename = basename($car->image);
+                $publicCopy = public_path('cars/' . $oldBasename);
+                if (file_exists($publicCopy)) {
+                    @unlink($publicCopy);
+                }
+            } else {
+                // if public disk didn't have it, still try to remove public/cars copy
+                $oldBasename = basename($car->image ?? '');
+                $publicCopy = public_path('cars/' . $oldBasename);
+                if ($oldBasename && file_exists($publicCopy)) {
+                    @unlink($publicCopy);
+                }
+            }
+
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+
+            // try Storage facade first
+            try {
+                $stored = Storage::disk('public')->putFileAs('cars', $file, $filename);
+                if ($stored) {
+                    $path = 'cars/' . $filename;
+                }
+            } catch (\Throwable $e) {
+                Log::error('Storage putFileAs failed: ' . $e->getMessage());
+            }
+
+            // fallback: move uploaded file directly into storage/app/public/cars
+            if (empty($path)) {
+                try {
+                    $fs = new Filesystem();
+                    $targetDir = storage_path('app/public/cars');
+                    if (! $fs->isDirectory($targetDir)) {
+                        $fs->makeDirectory($targetDir, 0755, true);
+                    }
+
+                    $moved = $file->move($targetDir, $filename);
+                    if ($moved) {
+                        $path = 'cars/' . $filename;
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Direct move of uploaded file failed: ' . $e->getMessage());
+                }
+            }
+
+            if (empty($path)) {
+                Log::error('Image upload failed and no fallback succeeded', ['user_id' => $request->user()->id ?? null]);
+                return back()->withErrors(['image' => 'Opslaan van de afbeelding is mislukt.'])->withInput();
+            }
+
+            $car->image = $path;
+            $car->save();
+
+            // ensure public fallback copy exists so asset('cars/...') works when storage:link is missing
+            try {
+                $basename = basename($path);
+                $source = storage_path('app/public/' . $path);
+                $targetDir = public_path('cars');
+                if (file_exists($source)) {
+                    if (! is_dir($targetDir)) {
+                        mkdir($targetDir, 0755, true);
+                    }
+                    copy($source, $targetDir . '/' . $basename);
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Failed to create public copy of uploaded image: ' . $e->getMessage());
+            }
+        }
 
         return redirect()
             ->route('cars.my-offers')
@@ -269,6 +354,7 @@ class CarController extends Controller
             'color' => ['nullable', 'string', 'max:255'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['integer', 'exists:tags,id'],
+            'image' => ['nullable', 'image', 'max:2048'],
         ]);
 
         $tagIds = $validated['tags'] ?? [];
@@ -281,6 +367,66 @@ class CarController extends Controller
             'license_plate' => $licensePlate,
         ]);
 
+        // handle image upload
+        if ($request->hasFile('image')) {
+            $file = $request->file('image');
+
+            if (! $file || ! $file->isValid()) {
+                return back()->withErrors(['image' => 'Upload mislukt. Probeer het opnieuw.'])->withInput();
+            }
+
+            $extension = $file->getClientOriginalExtension() ?: 'jpg';
+            $filename = time() . '_' . uniqid() . '.' . $extension;
+
+            try {
+                $stored = Storage::disk('public')->putFileAs('cars', $file, $filename);
+                if ($stored) {
+                    $path = 'cars/' . $filename;
+                }
+            } catch (\Throwable $e) {
+                Log::error('Storage putFileAs failed (storeStepTwo): ' . $e->getMessage());
+            }
+
+            if (empty($path)) {
+                try {
+                    $fs = new Filesystem();
+                    $targetDir = storage_path('app/public/cars');
+                    if (! $fs->isDirectory($targetDir)) {
+                        $fs->makeDirectory($targetDir, 0755, true);
+                    }
+
+                    $moved = $file->move($targetDir, $filename);
+                    if ($moved) {
+                        $path = 'cars/' . $filename;
+                    }
+                } catch (\Throwable $e) {
+                    Log::error('Direct move failed (storeStepTwo): ' . $e->getMessage());
+                }
+            }
+
+            if (empty($path)) {
+                Log::error('Image upload failed in storeStepTwo', ['user_id' => $request->user()->id ?? null]);
+                return back()->withErrors(['image' => 'Opslaan van de afbeelding is mislukt.'])->withInput();
+            }
+
+            $car->image = $path;
+            $car->save();
+
+            // ensure public fallback copy exists
+            try {
+                $basename = basename($path);
+                $source = storage_path('app/public/' . $path);
+                $targetDir = public_path('cars');
+                if (file_exists($source)) {
+                    if (! is_dir($targetDir)) {
+                        mkdir($targetDir, 0755, true);
+                    }
+                    copy($source, $targetDir . '/' . $basename);
+                }
+            } catch (\Throwable $e) {
+                Log::warning('Failed to create public copy of uploaded image (storeStepTwo): ' . $e->getMessage());
+            }
+        }
         if ($tagIds !== []) {
             $car->tags()->sync($tagIds);
         }

@@ -12,7 +12,7 @@
 
         <div class="card border-0 shadow-sm">
             <div class="card-body">
-                <form method="POST" action="{{ route('cars.update', $car) }}">
+                <form method="POST" action="{{ route('cars.update', $car) }}" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
 
@@ -77,6 +77,33 @@
                                 <div class="text-danger small mt-2">{{ $message }}</div>
                             @enderror
                         </div>
+
+                        <div class="col-12 mt-3">
+                            <label for="image" class="form-label">Foto (vervangen)</label>
+                            @php
+                                $editImageSrc = null;
+                                if ($car->image) {
+                                    $basename = basename($car->image);
+                                    $publicCopy = public_path('cars/' . $basename);
+                                    if (file_exists($publicCopy)) {
+                                        $editImageSrc = asset('cars/' . $basename);
+                                    } else {
+                                        $editImageSrc = asset('storage/' . $car->image);
+                                    }
+                                }
+                            @endphp
+                            @if($editImageSrc)
+                                <div class="mb-2">
+                                    <a href="#" id="edit-image-link" aria-label="Bekijk volledige afbeelding">
+                                        <img src="{{ $editImageSrc }}" alt="{{ $car->brand }} {{ $car->model }}" id="edit-image-preview" class="img-thumbnail" style="width:100%; max-height:360px; height:360px; object-fit:cover; cursor:zoom-in;">
+                                    </a>
+                                </div>
+                            @endif
+                            <input id="image" name="image" type="file" accept="image/*" class="form-control @error('image') is-invalid @enderror">
+                            @error('image')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
                     </div>
 
                     <div class="mt-4">
@@ -88,3 +115,76 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function(){
+        const preview = document.getElementById('edit-image-preview');
+        const link = document.getElementById('edit-image-link');
+        if (!preview || !link) return;
+
+        // Create lightbox elements
+        const lightbox = document.createElement('div');
+        lightbox.id = 'imageLightbox';
+        Object.assign(lightbox.style, {
+            position: 'fixed',
+            inset: '0',
+            background: 'rgba(0,0,0,0.8)',
+            display: 'none',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+            padding: '2rem'
+        });
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.innerHTML = '\u2715';
+        Object.assign(closeBtn.style, {
+            position: 'absolute',
+            top: '1rem',
+            right: '1rem',
+            background: 'rgba(0,0,0,0.6)',
+            color: '#fff',
+            border: 'none',
+            width: '36px',
+            height: '36px',
+            borderRadius: '18px',
+            fontSize: '18px',
+            cursor: 'pointer'
+        });
+
+        const img = document.createElement('img');
+        img.alt = preview.alt || '';
+        Object.assign(img.style, {
+            maxWidth: '100%',
+            maxHeight: '100%',
+            borderRadius: '6px',
+            boxShadow: '0 6px 30px rgba(0,0,0,0.6)'
+        });
+
+        lightbox.appendChild(closeBtn);
+        lightbox.appendChild(img);
+        document.body.appendChild(lightbox);
+
+        function openLightbox(e){
+            e.preventDefault();
+            const src = preview.getAttribute('src');
+            img.src = src;
+            lightbox.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox(){
+            lightbox.style.display = 'none';
+            img.src = '';
+            document.body.style.overflow = '';
+        }
+
+        link.addEventListener('click', openLightbox);
+        closeBtn.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', function(e){ if (e.target === lightbox) closeLightbox(); });
+        document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeLightbox(); });
+    })();
+</script>
+@endpush

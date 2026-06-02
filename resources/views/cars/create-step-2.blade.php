@@ -25,7 +25,7 @@
 
         <div class="card">
             <div class="card-body">
-                <form method="POST" action="{{ route('cars.create.step2.store') }}">
+                <form method="POST" action="{{ route('cars.create.step2.store') }}" enctype="multipart/form-data">
                     @csrf
 
                     @php
@@ -37,6 +37,14 @@
                             <label for="brand" class="form-label">Merk</label>
                             <input id="brand" name="brand" type="text" class="form-control @error('brand') is-invalid @enderror" value="{{ old('brand') }}" required>
                             @error('brand')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+
+                        <div class="col-12">
+                            <label for="image" class="form-label">Foto van de auto</label>
+                            <input id="image" name="image" type="file" accept="image/*" class="form-control @error('image') is-invalid @enderror">
+                            @error('image')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>

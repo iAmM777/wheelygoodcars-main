@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Create regular users (non-admin)
-        User::factory(120)->create(['admin' => false]);
+        User::factory(10)->create(['admin' => false]);
 
         User::factory()->count(2)->state(fn (): array => [
             'phone_number' => null,
@@ -35,23 +35,6 @@ class UserSeeder extends Seeder
             'admin' => false,
         ])->create();
 
-        User::factory()->count(2)->state(fn (): array => [
-            'phone_number' => fake()->numerify('06########'),
-            'admin' => false,
-        ])->create();
-
-        User::factory()->count(2)->state(fn (): array => [
-            'phone_number' => fake()->numerify('06########'),
-            'admin' => false,
-        ])->create();
-
-        User::factory()->count(2)->state(fn (): array => [
-            'phone_number' => fake()->numerify('06########'),
-            'admin' => false,
-        ])->create();
-
-        User::factory()->count(2)->state(fn (): array => [
-            'phone_number' => fake()->numerify('06########'),
-        ])->create();
+       
     }
 }
